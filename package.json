@@ -1,0 +1,37 @@
+{
+  "name": "edge-design-system",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Edge: a small, accessible React + MUI design system drawn from a leather workshop and a painting studio.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource/eb-garamond": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@mui/material": "^6.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^22.20.5",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "jsdom": "^25.0.0",
+    "typescript": "~5.6.2",
+    "vite": "^5.4.8",
+    "vitest": "^2.1.1"
+  }
+}
