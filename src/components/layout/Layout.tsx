@@ -1,7 +1,6 @@
 import { forwardRef, type ReactNode } from 'react';
 import { Typography } from '@mui/material';
-import { styled, type Theme } from '@mui/material/styles';
-import rootShouldForwardProp from '@mui/material/styles/rootShouldForwardProp';
+import { styled, type Theme } from '@mui/material';
 import { layout, typography, type ColumnPreset } from '../../tokens/tokens';
 
 /**
@@ -23,8 +22,13 @@ function responsive(theme: Theme, value: Responsive | Template, css: (v: number 
   return Object.assign({}, ...BREAKS.filter((b) => value[b] !== undefined).map((b) => (b === 'xs' ? css(value[b]!) : { [theme.breakpoints.up(b)]: css(value[b]!) })));
 }
 
-/** Forwards what MUI forwards (never `as`, `sx` or `theme`), minus this component's own props. */
-const forwardExcept = (...own: string[]) => (prop: PropertyKey) => rootShouldForwardProp(prop as string) && !own.includes(prop as string);
+/**
+ * Forwards what MUI's own components forward, minus this component's props.
+ * `as`, `sx`, `theme` and `ownerState` never reach the DOM; the styling
+ * engine consumes them.
+ */
+const NEVER = ['as', 'sx', 'theme', 'ownerState'];
+const forwardExcept = (...own: string[]) => (prop: PropertyKey) => !NEVER.includes(prop as string) && !own.includes(prop as string);
 
 /** Merges style objects, combining (not replacing) the same media query from each. */
 function merge(...styles: (object | false | undefined)[]) {

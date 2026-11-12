@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Box, CssBaseline, type BoxProps } from '@mui/material';
-import { ThemeProvider, useColorScheme } from '@mui/material/styles';
+import { ThemeProvider, useColorScheme } from '@mui/material';
 import { createEdgeTheme, MODE_ATTRIBUTE, modeFor, schemeFor } from './createEdgeTheme';
 import type { EdgeName, Mode } from '../tokens/tokens';
 

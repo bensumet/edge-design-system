@@ -1,6 +1,6 @@
 // Types theme.vars (the CSS variables) on every theme.
 import type {} from '@mui/material/themeCssVarsAugmentation';
-import { createTheme, darken, getLuminance, lighten, type CSSObject, type PaletteOptions, type Theme } from '@mui/material/styles';
+import { createTheme, darken, getLuminance, lighten, type CSSObject, type PaletteOptions, type Theme } from '@mui/material';
 import {
   accent, chapters, motion, radius, status, surfacesFor, textRoles, typography,
   type EdgeName, type Mode, type TextRole,

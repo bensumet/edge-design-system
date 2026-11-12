@@ -1,5 +1,5 @@
 import { Card, type CardProps } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { styled } from '@mui/material';
 
 export interface EdgeCardProps extends CardProps {
   /** Show the painted accent edge along the top, like edge paint on leather. */

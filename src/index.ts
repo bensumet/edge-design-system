@@ -1,3 +1,4 @@
+/// <reference types="@mui/material/themeCssVarsAugmentation" preserve="true" />
 // Edge: tokens, theme and components. Everything a product built on Edge needs
 // comes from this one entry point.
 export * from './tokens/tokens';

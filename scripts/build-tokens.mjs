@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // Publishes Edge for machines: tokens as W3C Design Tokens (DTCG) JSON and CSS
 // custom properties, the component rules, a rules index, and llms.txt.
 //
