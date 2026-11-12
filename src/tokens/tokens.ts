@@ -138,15 +138,116 @@ export const typography = {
   // headlines, set against the Garamond like a bold cover against its text.
   poster: '"Archivo Variable", Archivo, "Arial Narrow", Inter, sans-serif',
   body: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+  // Code, token names and file paths. System faces only; nothing to download.
+  mono: 'ui-monospace, "SF Mono", Menlo, Consolas, monospace',
   // A 1.25 (major third) scale from a 16px base, in px.
   scale: { xs: 12.8, sm: 14, base: 16, lg: 20, xl: 25, '2xl': 31.25, '3xl': 39, '4xl': 48.8 },
   measure: '66ch', // comfortable line length for reading
   readingLeading: 1.65,
 } as const;
 
+/**
+ * Text roles: every piece of text on a screen is one of these. The theme turns
+ * each role into a Typography variant (`<Typography variant="prose">`), so a
+ * screen picks a role and never sets font, size or leading itself.
+ * Sizes are rem; leading is unitless. `size` may vary by breakpoint.
+ */
+export type TextRole =
+  | 'poster' | 'posterItalic' | 'posterSection' | 'posterSectionItalic' | 'indexTitle' | 'figure'
+  | 'hero' | 'heroItalic' | 'signoff' | 'accentItalic' | 'posterMinor' | 'byline' | 'smallCaps'
+  | 'lead' | 'prose' | 'eyebrow' | 'kicker' | 'nav' | 'tab' | 'metric' | 'amount' | 'label' | 'data' | 'mono' | 'caption' | 'brand';
+
+export interface TextRoleSpec {
+  family: keyof Pick<typeof typography, 'display' | 'poster' | 'body' | 'mono'>;
+  /** 'inherit' takes the size of the line the text sits in. */
+  size: string | { xs: string; md: string };
+  leading: number | 'inherit';
+  weight?: number;
+  /** Width axis of the variable grotesque, in percent. */
+  stretch?: number;
+  tracking?: string;
+  italic?: boolean;
+  /** true sets capitals; false undoes capitals inherited from a caps line. */
+  caps?: boolean;
+  /** True small caps from the font's own glyphs, not shrunken capitals. */
+  smallCaps?: boolean;
+  /** Tabular, lining figures, for numbers compared in columns. */
+  tabular?: boolean;
+  /** Default text color: the main text, the muted text or the accent. */
+  tone?: 'text' | 'muted' | 'accent';
+  description: string;
+}
+
+export const textRoles: Record<TextRole, TextRoleSpec> = {
+  hero: { family: 'poster', size: 'clamp(3.2rem, 1rem + 9vw, 8.6rem)', leading: 0.84, weight: 850, stretch: 70, caps: true, description: 'The home page statement; once per site.' },
+  heroItalic: { family: 'display', size: 'clamp(2.1rem, 1rem + 4.6vw, 5rem)', leading: 1.02, weight: 400, italic: true, tone: 'accent', description: 'The italic line under the hero.' },
+  signoff: { family: 'poster', size: 'clamp(2.6rem, 1rem + 5vw, 5.5rem)', leading: 0.82, weight: 850, stretch: 72, caps: true, description: 'The closing line in the footer.' },
+  accentItalic: { family: 'display', size: 'inherit', leading: 'inherit', weight: 400, italic: true, caps: false, tone: 'accent', description: 'A Garamond italic run inside a poster line, at that line\'s size.' },
+  poster: { family: 'poster', size: 'clamp(2.8rem, 1.2rem + 6vw, 6.4rem)', leading: 0.88, weight: 850, stretch: 72, caps: true, description: 'The bold first line of a page title.' },
+  posterItalic: { family: 'display', size: 'clamp(2rem, 1rem + 4vw, 4.4rem)', leading: 1.05, weight: 400, italic: true, tone: 'accent', description: 'The Garamond italic second line of a page title.' },
+  posterSection: { family: 'poster', size: 'clamp(2rem, 1.2rem + 3vw, 3.4rem)', leading: 0.88, weight: 850, stretch: 72, caps: true, description: 'A title one step down from the page title.' },
+  posterSectionItalic: { family: 'display', size: 'clamp(1.5rem, 1rem + 2vw, 2.4rem)', leading: 1.05, weight: 400, italic: true, tone: 'accent', description: 'Italic counterpart of posterSection.' },
+  posterMinor: { family: 'poster', size: { xs: '1.7rem', md: '2.3rem' }, leading: 0.92, weight: 850, stretch: 72, caps: true, description: 'A small poster title: a book or chapter opener inside a section.' },
+  byline: { family: 'display', size: '1.3rem', leading: 1.3, italic: true, tone: 'accent', description: 'An italic name under or beside a title: an author, a publisher, the wordmark\'s surname.' },
+  smallCaps: { family: 'display', size: 'inherit', leading: 'inherit', weight: 500, tracking: '0.06em', smallCaps: true, description: 'A run of true small caps in Garamond: the opening words of a lead, abbreviations.' },
+  indexTitle: { family: 'poster', size: { xs: '1.5rem', md: '1.9rem' }, leading: 1, weight: 750, stretch: 80, caps: true, description: 'Titles in a contents list.' },
+  figure: { family: 'poster', size: { xs: '2.2rem', md: '3rem' }, leading: 0.9, weight: 850, stretch: 72, tabular: true, tone: 'accent', description: 'A headline number in a row of results.' },
+  lead: { family: 'display', size: { xs: '1.2rem', md: '1.32rem' }, leading: 1.65, tone: 'text', description: 'Opening and featured paragraphs.' },
+  prose: { family: 'display', size: '1.15rem', leading: 1.55, description: 'Reading text: explanations under a label, essays, captions with substance.' },
+  eyebrow: { family: 'body', size: '0.7rem', leading: 1.4, weight: 600, tracking: '0.24em', caps: true, tone: 'muted', description: 'A small letterspaced label above a title or a value.' },
+  nav: { family: 'body', size: '0.72rem', leading: 1.4, weight: 600, tracking: '0.18em', caps: true, description: 'Section links in the site navigation.' },
+  amount: { family: 'display', size: { xs: '2.4rem', md: '3rem' }, leading: 1.05, tabular: true, description: 'The one figure a screen is about, like a quote\'s total, in Garamond.' },
+  metric: { family: 'body', size: '1.3rem', leading: 1.3, weight: 700, tabular: true, description: 'A key figure in a product screen\'s summary strip.' },
+  tab: { family: 'body', size: '1rem', leading: 1.5, weight: 600, description: 'Page links inside a section, set as tabs.' },
+  kicker: { family: 'body', size: '0.62rem', leading: 1.4, weight: 600, tracking: '0.42em', caps: true, description: 'Widely spaced diagram labels and running heads.' },
+  label: { family: 'body', size: '1rem', leading: 1.35, weight: 650, description: 'The bold head of a point, a row or a card.' },
+  data: { family: 'body', size: '1rem', leading: 1.5, weight: 600, tabular: true, tone: 'accent', description: 'Numbers that line up: step numbers, counts.' },
+  mono: { family: 'mono', size: '0.85rem', leading: 1.6, description: 'Code, file names and token names.' },
+  caption: { family: 'body', size: '0.85rem', leading: 1.5, tone: 'muted', description: 'Notes under figures and small print.' },
+  brand: { family: 'poster', size: '1.35rem', leading: 1, weight: 850, stretch: 72, caps: true, tracking: '-0.01em', description: 'The wordmark: bold first name.' },
+};
+
+/**
+ * Layout presets: the column structures screens repeat. Each value is a
+ * responsive grid-template-columns; the Columns component takes the name.
+ */
+export const layout = {
+  columns: {
+    halves: { xs: '1fr', md: '1fr 1fr' },
+    halvesEarly: { xs: '1fr', sm: '1fr 1fr' },
+    thirds: { xs: '1fr', md: 'repeat(3, 1fr)' },
+    quarters: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' },
+    /** A label column beside its content. */
+    aside: { xs: '1fr', md: '12rem 1fr' },
+    asideWide: { xs: '1fr', md: '14rem 1fr' },
+    /** Number, head and body: numbered decisions and gates. */
+    numbered: { xs: '2.5rem 1fr', md: '3rem 1fr 1.3fr' },
+    /** A contents page: number, title, note. */
+    contents: { xs: '3rem 1fr', md: '4rem 1fr 1.2fr' },
+    /** A main column beside a supporting one, 7:5. */
+    wideNarrow: { xs: '1fr', md: '7fr 5fr' },
+    /** A narrow note beside a wide figure. */
+    narrowWide: { xs: '1fr', md: '1fr 2fr' },
+  },
+  /** Vertical space between page sections, in theme spacing units. */
+  sectionGap: { xs: 6, md: 8 },
+} as const;
+export type ColumnPreset = keyof typeof layout.columns;
+
 export const space = [0, 4, 8, 12, 16, 24, 32, 48, 64] as const;
 // Square corners throughout, like cut leather and trimmed paper.
 export const radius = { sm: 0, md: 0, lg: 0 } as const;
+
+// Motion answers what a person did: open, switch, arrive. Durations in ms.
+// Everything collapses to an instant change under prefers-reduced-motion.
+export const motion = {
+  duration: { quick: 140, base: 240, enter: 420 },
+  // Settles like paper laid down: fast start, soft landing.
+  ease: { enter: 'cubic-bezier(0.2, 0.7, 0.2, 1)', standard: 'cubic-bezier(0.4, 0, 0.2, 1)' },
+  // Distance an arriving block travels, in px. Small: it moves into place, it doesn't fly in.
+  rise: 8,
+  reduced: '@media (prefers-reduced-motion: reduce)',
+} as const;
 
 export function accent(edge: EdgeName, mode: Mode) {
   const e = edges[edge];

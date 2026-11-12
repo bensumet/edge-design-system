@@ -29,6 +29,12 @@ export function StreamingText({ text, speed = 45, autoStart = false, placeholder
 
   const start = useCallback(() => {
     clear();
+    // With reduced motion, show the whole draft at once instead of animating it.
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      setCount(words.length);
+      setState('done');
+      return;
+    }
     setCount(0);
     setState('streaming');
     timer.current = window.setInterval(() => {

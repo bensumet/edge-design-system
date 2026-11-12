@@ -1,5 +1,5 @@
 import { Card, type CardProps } from '@mui/material';
-import { alpha, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 
 export interface EdgeCardProps extends CardProps {
   /** Show the painted accent edge along the top, like edge paint on leather. */
@@ -30,7 +30,7 @@ export const EdgeCard = styled(Card, {
       top: 0,
       height: 8,
       background: (() => {
-        const [a, b, c, d, e] = theme.palette.edge.stripes;
+        const { s1: a, s2: b, s3: c, s4: d, s5: e } = theme.vars.palette.edge.stripes;
         return `linear-gradient(90deg, ${a} 0 14%, ${b} 14% 34%, ${c} 34% 62%, ${d} 62% 78%, ${e} 78% 100%)`;
       })(),
     },
@@ -41,7 +41,7 @@ export const EdgeCard = styled(Card, {
       position: 'absolute',
       inset: 7,
       borderRadius: 0,
-      border: `1px dashed ${alpha(theme.palette.text.secondary, 0.35)}`,
+      border: `1px dashed rgba(${theme.vars.palette.text.secondaryChannel} / 0.35)`,
       pointerEvents: 'none',
     },
   }),
@@ -55,7 +55,7 @@ export const StitchDivider = styled('hr')(({ theme }) => ({
   border: 0,
   height: 10,
   margin: theme.spacing(4, 0),
-  background: `radial-gradient(circle, ${theme.palette.primary.main} 3px, transparent 3.5px) 0 50% / 18px 10px repeat-x`,
+  background: `radial-gradient(circle, ${theme.vars.palette.primary.main} 3px, transparent 3.5px) 0 50% / 18px 10px repeat-x`,
   maskImage: 'linear-gradient(90deg, #000 0 40%, transparent 70%)',
   position: 'relative',
   overflow: 'visible',
@@ -66,6 +66,6 @@ export const StitchDivider = styled('hr')(({ theme }) => ({
     right: 0,
     top: '50%',
     height: 1,
-    background: alpha(theme.palette.text.primary, 0.5),
+    background: `rgba(${theme.vars.palette.text.primaryChannel} / 0.5)`,
   },
 }));

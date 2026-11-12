@@ -1,27 +1,81 @@
 {
-  "name": "edge-design-system",
-  "private": true,
-  "version": "1.0.0",
-  "description": "Edge: a small, accessible React + MUI design system drawn from a leather workshop and a painting studio.",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview",
-    "test": "vitest run",
-    "typecheck": "tsc -b"
+  "name": "@bensumet/edge",
+  "version": "2.0.0",
+  "description": "Edge: a small, accessible React + MUI design system drawn from a leather workshop and a print studio, with rules that people and coding agents follow.",
+  "license": "MIT",
+  "author": "Ben Viwatmanitsakul",
+  "homepage": "https://bensumet.github.io/#/system",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bensumet/edge-design-system.git"
   },
-  "dependencies": {
+  "bugs": "https://github.com/bensumet/edge-design-system/issues",
+  "keywords": ["design-system", "react", "mui", "design-tokens", "accessibility", "mcp"],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./tokens": {
+      "types": "./dist/types/tokens/node.d.ts",
+      "import": "./dist/tokens.js"
+    },
+    "./tokens.json": "./dist/tokens.json",
+    "./tokens.css": "./dist/tokens.css",
+    "./contrast.json": "./dist/contrast.json",
+    "./llms.txt": "./dist/llms.txt",
+    "./rules/*": "./dist/rules/*",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "edge-mcp": "./mcp/server.mjs",
+    "edge-check-ui": "./scripts/check-ui.mjs",
+    "edge-tokens": "./scripts/build-tokens.mjs"
+  },
+  "files": [
+    "dist",
+    "rules",
+    "mcp/server.mjs",
+    "mcp/README.md",
+    "scripts/check-ui.mjs",
+    "scripts/build-tokens.mjs",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build && tsc -p tsconfig.build.json && node scripts/build-tokens.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "npm run build && vitest run",
+    "check-ui": "node scripts/check-ui.mjs",
+    "mcp": "node mcp/server.mjs",
+    "changeset": "changeset",
+    "release": "npm run build && changeset publish"
+  },
+  "peerDependencies": {
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
-    "@fontsource-variable/archivo": "^5.3.0",
-    "@fontsource/eb-garamond": "^5.3.0",
-    "@fontsource/inter": "^5.3.0",
     "@mui/material": "^6.1.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^18.3.1"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "zod": "3.25.76"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^6.5.0",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
@@ -30,8 +84,11 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "jsdom": "^25.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "typescript": "~5.6.2",
     "vite": "^5.4.8",
-    "vitest": "^2.1.1"
+    "vitest": "^2.1.1",
+    "vitest-axe": "^0.1.0"
   }
 }

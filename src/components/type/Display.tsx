@@ -59,7 +59,7 @@ export function OutlineEcho({ children, offset = '0.06em', sx }: { children: str
  */
 export function ChapterStripes({ direction = 'vertical', sx }: { direction?: 'vertical' | 'horizontal'; sx?: SxProps<Theme> }) {
   const t = useTheme();
-  const [a, b, c, d, e] = t.palette.edge.stripes;
+  const { s1: a, s2: b, s3: c, s4: d, s5: e } = t.vars.palette.edge.stripes;
   const stops = [`${a} 0 14%`, `${b} 14% 34%`, `${c} 34% 62%`, `${d} 62% 78%`, `${e} 78% 100%`].join(', ');
   return (
     <Box
@@ -120,42 +120,45 @@ export type WallArtVariant = 'planets' | 'rings' | 'verticals' | 'arrows';
  * rings hanging on threads, bars crossed by a disc, arrows on fine lines.
  */
 export function WallArt({ variant, sx }: { variant: WallArtVariant; sx?: SxProps<Theme> }) {
+  // Colors are CSS variables, so they go in style, not in SVG attributes.
   const t = useTheme();
-  const [s1, s2, s3, s4, s5] = t.palette.edge.stripes;
-  const ink = t.palette.text.primary;
-  const line = { stroke: ink, strokeWidth: 0.8, fill: 'none' };
+  const { s1, s2, s3, s4, s5 } = t.vars.palette.edge.stripes;
+  const ink = t.vars.palette.text.primary;
+  const f = (c: string) => ({ style: { fill: c } });
+  const line = { style: { stroke: ink, fill: 'none' }, strokeWidth: 0.8 };
+  const ring = (c: string, w: number) => ({ style: { stroke: c, fill: 'none' }, strokeWidth: w });
 
   const art: Record<WallArtVariant, React.ReactNode> = {
     planets: (
       <>
-        <circle cx="132" cy="134" r="52" fill={ink} />
-        <circle cx="70" cy="96" r="26" fill={s2} />
-        <circle cx="104" cy="44" r="13" fill={s4} />
-        <circle cx="48" cy="40" r="8" fill={s1} />
-        <circle cx="160" cy="70" r="6" fill={s3} />
-        <circle cx="146" cy="156" r="10" fill={s1} />
-        <line x1="14" y1="190" x2="196" y2="190" stroke={ink} strokeWidth="4" />
+        <circle cx="132" cy="134" r="52" {...f(ink)} />
+        <circle cx="70" cy="96" r="26" {...f(s2)} />
+        <circle cx="104" cy="44" r="13" {...f(s4)} />
+        <circle cx="48" cy="40" r="8" {...f(s1)} />
+        <circle cx="160" cy="70" r="6" {...f(s3)} />
+        <circle cx="146" cy="156" r="10" {...f(s1)} />
+        <line x1="14" y1="190" x2="196" y2="190" {...ring(ink, 4)} />
       </>
     ),
     rings: (
       <>
         <line x1="54" y1="0" x2="54" y2="92" {...line} />
-        <circle cx="54" cy="110" r="18" {...line} stroke={s4} strokeWidth="3" />
+        <circle cx="54" cy="110" r="18" {...ring(s4, 3)} />
         <line x1="104" y1="0" x2="104" y2="40" {...line} />
-        <circle cx="104" cy="70" r="30" {...line} stroke={ink} strokeWidth="3" />
-        <circle cx="122" cy="52" r="5" fill={s2} />
+        <circle cx="104" cy="70" r="30" {...ring(ink, 3)} />
+        <circle cx="122" cy="52" r="5" {...f(s2)} />
         <line x1="150" y1="0" x2="150" y2="128" {...line} />
-        <circle cx="150" cy="158" r="30" {...line} stroke={s3} strokeWidth="4" />
-        <circle cx="160" cy="176" r="5" fill={ink} />
+        <circle cx="150" cy="158" r="30" {...ring(s3, 4)} />
+        <circle cx="160" cy="176" r="5" {...f(ink)} />
       </>
     ),
     verticals: (
       <>
-        <rect x="42" y="0" width="7" height="200" fill={s2} />
-        <rect x="62" y="0" width="7" height="200" fill={s4} />
-        <rect x="104" y="0" width="7" height="200" fill={s1} />
-        <circle cx="112" cy="78" r="50" fill={ink} />
-        <circle cx="70" cy="160" r="9" fill={s3} />
+        <rect x="42" y="0" width="7" height="200" {...f(s2)} />
+        <rect x="62" y="0" width="7" height="200" {...f(s4)} />
+        <rect x="104" y="0" width="7" height="200" {...f(s1)} />
+        <circle cx="112" cy="78" r="50" {...f(ink)} />
+        <circle cx="70" cy="160" r="9" {...f(s3)} />
         <line x1="0" y1="190" x2="200" y2="190" {...line} />
       </>
     ),
@@ -165,11 +168,11 @@ export function WallArt({ variant, sx }: { variant: WallArtVariant; sx?: SxProps
           <g key={x}>
             <line x1={x} y1="0" x2={x} y2="200" {...line} />
             {[50 + i * 22, 112 + i * 14].map((y, j) => (
-              <path key={y} d={`M${x - 7} ${y + 10} L${x} ${y} L${x + 7} ${y + 10} Z`} fill={[s2, ink, s4, s3][(i + j) % 4]} />
+              <path key={y} d={`M${x - 7} ${y + 10} L${x} ${y} L${x + 7} ${y + 10} Z`} {...f([s2, ink, s4, s3][(i + j) % 4])} />
             ))}
           </g>
         ))}
-        <circle cx="120" cy="30" r="6" fill={s5} />
+        <circle cx="120" cy="30" r="6" {...f(s5)} />
       </>
     ),
   };
@@ -276,8 +279,10 @@ function SpreadHero({ folio, label, bold, italic, art, children }: PageHeroProps
         position: 'relative',
         overflow: 'hidden',
         bgcolor: 'edge.tint',
-        border: t.palette.mode === 'dark' ? 1 : 0,
+        borderStyle: 'solid',
         borderColor: 'divider',
+        borderWidth: 0,
+        ...t.applyStyles('dark', { borderWidth: 1 }),
         minHeight: { xs: 500, md: 640 },
         isolation: 'isolate',
       }}
@@ -302,7 +307,7 @@ function SpreadHero({ folio, label, bold, italic, art, children }: PageHeroProps
           textTransform: 'lowercase',
           whiteSpace: 'nowrap',
           color: 'edge.line',
-          opacity: t.palette.mode === 'dark' ? 0.14 : 0.22,
+          opacity: t.vars.palette.edge.ghost.hero,
           zIndex: -1,
           userSelect: 'none',
         }}
@@ -392,7 +397,7 @@ export function GhostWord({ word, align = 'left', sx }: { word: string; align?: 
         letterSpacing: '-0.05em',
         textTransform: 'lowercase',
         color: 'primary.main',
-        opacity: (t: Theme) => (t.palette.mode === 'dark' ? 0.12 : 0.13),
+        opacity: (t: Theme) => t.vars.palette.edge.ghost.word,
         whiteSpace: 'nowrap',
         pointerEvents: 'none',
         userSelect: 'none',

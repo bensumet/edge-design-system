@@ -9,14 +9,14 @@ export interface Suggestion {
   swatch?: string;
 }
 
-type Decision = 'accepted' | 'dismissed';
+export type Decision = 'accepted' | 'dismissed';
 
 /**
  * AI recommendations the person stays in control of. Every suggestion shows
  * its reason, and nothing is applied until it is accepted. Dismissed items
  * can be restored, so a misclick is never final.
  */
-export function SuggestionList({ suggestions }: { suggestions: Suggestion[] }) {
+export function SuggestionList({ suggestions, onDecide }: { suggestions: Suggestion[]; onDecide?: (id: string, decision: Decision | null) => void }) {
   const [decisions, setDecisions] = useState<Record<string, Decision>>({});
   const decide = (id: string, d: Decision | undefined) =>
     setDecisions((prev) => {
@@ -25,6 +25,7 @@ export function SuggestionList({ suggestions }: { suggestions: Suggestion[] }) {
       else delete next[id];
       return next;
     });
+  const choose = (id: string, d: Decision | undefined) => { decide(id, d); onDecide?.(id, d ?? null); };
 
   return (
     <Stack component="ul" spacing={1.5} sx={{ listStyle: 'none', p: 0, m: 0 }}>
@@ -48,14 +49,14 @@ export function SuggestionList({ suggestions }: { suggestions: Suggestion[] }) {
                       <Typography variant="body2" sx={{ fontWeight: 600 }} role="status">
                         {d === 'accepted' ? 'Accepted' : 'Dismissed'}
                       </Typography>
-                      <Button size="small" onClick={() => decide(s.id, undefined)}>Undo</Button>
+                      <Button size="small" onClick={() => choose(s.id, undefined)}>Undo</Button>
                     </>
                   ) : (
                     <>
-                      <Button size="small" variant="contained" onClick={() => decide(s.id, 'accepted')} aria-label={`Accept ${s.title}`}>
+                      <Button size="small" variant="outlined" onClick={() => choose(s.id, 'accepted')} aria-label={`Accept ${s.title}`}>
                         Accept
                       </Button>
-                      <Button size="small" variant="outlined" onClick={() => decide(s.id, 'dismissed')} aria-label={`Dismiss ${s.title}`}>
+                      <Button size="small" variant="text" onClick={() => choose(s.id, 'dismissed')} aria-label={`Dismiss ${s.title}`}>
                         Dismiss
                       </Button>
                     </>

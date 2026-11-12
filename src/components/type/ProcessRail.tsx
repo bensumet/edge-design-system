@@ -62,7 +62,7 @@ export function ProcessRail({ steps, current, title }: { steps: RailStep[]; curr
                   border: 2,
                   borderColor: 'primary.main',
                   bgcolor: done || now ? 'primary.main' : 'background.paper',
-                  boxShadow: now ? (t) => `0 0 0 4px ${t.palette.background.paper}, 0 0 0 5px ${t.palette.primary.main}` : 'none',
+                  boxShadow: now ? (t) => `0 0 0 4px ${t.vars.palette.background.paper}, 0 0 0 5px ${t.vars.palette.primary.main}` : 'none',
                 }}
               />
               <Box sx={{ flex: 1, minWidth: 0 }}>
